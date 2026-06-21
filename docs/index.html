@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NSE Dashboard 2 — Avg Entry-Day Return (6-Month)</title>
+<style>
+  :root {
+    --bg:#f8f8f6; --surface:#fff; --surface2:#f2f1ee; --border:rgba(0,0,0,.08);
+    --border2:rgba(0,0,0,.14); --text:#1a1a18; --text2:#5a5a56; --text3:#9a9a96;
+    --green:#1a7a4a; --green-bg:#e6f4ec; --red:#b83232; --red-bg:#faeaea;
+    --blue:#1a5fa8; --blue-bg:#e6eef8; --amber:#8a5800; --amber-bg:#fef3d8;
+    --accent:#1a5fa8; --radius:10px; --radius-sm:6px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#121210;--surface:#1e1e1c;--surface2:#2a2a28;--border:rgba(255,255,255,.08);
+    --border2:rgba(255,255,255,.14);--text:#f0f0ec;--text2:#a0a09a;--text3:#606058;
+    --green:#4caf78;--green-bg:#0d2d1c;--red:#e06060;--red-bg:#2d0d0d;--blue:#5a90d8;
+    --blue-bg:#0d1e30;--amber:#e0a830;--amber-bg:#2a1e04;}
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+  .shell{max-width:1400px;margin:0 auto;padding:24px 20px}
+  .hdr{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .hdr-title{font-size:18px;font-weight:600;letter-spacing:-.3px}
+  .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px}
+  .badge{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--green-bg);color:var(--green);font-weight:500}
+  .updated{margin-left:auto;font-size:12px;color:var(--text3)}
+  .subtitle{font-size:12px;color:var(--text2);margin-bottom:20px;max-width:760px;line-height:1.6}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+  .sc{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+  .sc-label{font-size:11px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+  .sc-val{font-size:24px;font-weight:600;letter-spacing:-.5px}
+  .sc-sub{font-size:11px;color:var(--text3);margin-top:3px}
+  .controls{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+  .search-wrap{position:relative;flex:1;min-width:200px}
+  .search-wrap input{width:100%;padding:8px 12px 8px 34px;border:.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-size:13px;outline:none}
+  .search-wrap input:focus{border-color:var(--accent)}
+  .search-wrap .ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px}
+  select{padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-size:13px;cursor:pointer;outline:none}
+  .ctrl-label{font-size:12px;color:var(--text2)}
+  .tbl-wrap{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text2);border-bottom:.5px solid var(--border);background:var(--surface2);cursor:pointer;white-space:nowrap;user-select:none}
+  th:hover{color:var(--text)}
+  td{padding:10px 14px;border-bottom:.5px solid var(--border);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:var(--surface2);cursor:pointer}
+  .sym{font-weight:600;font-size:13px;letter-spacing:-.2px}
+  .pos{color:var(--green);font-weight:500}
+  .neg{color:var(--red);font-weight:500}
+  .big{font-weight:600;font-size:14px}
+  .bar-wrap{width:90px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle}
+  .bar-fill{height:5px;border-radius:3px}
+  .detail{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-top:20px}
+  .detail-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+  .detail-sym{font-size:20px;font-weight:700;letter-spacing:-.5px}
+  .close-btn{background:var(--surface2);border:none;border-radius:var(--radius-sm);padding:6px 10px;cursor:pointer;color:var(--text2);font-size:16px}
+  .detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+  .dg-item{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px}
+  .dg-label{font-size:11px;color:var(--text2);margin-bottom:4px}
+  .dg-val{font-size:20px;font-weight:600}
+  .detail-note{font-size:12px;color:var(--text3);line-height:1.6}
+  .detail-note strong{color:var(--text2)}
+  .pg{display:flex;align-items:center;gap:8px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}
+  .pg button{padding:6px 12px;border:.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-size:12px;cursor:pointer}
+  .pg button:disabled{opacity:.4;cursor:default}
+  .no-data{padding:40px;text-align:center;color:var(--text3)}
+  .err-box{background:var(--red-bg);color:var(--red);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px;font-size:13px;line-height:1.6}
+  .loader{display:flex;align-items:center;justify-content:center;gap:10px;padding:40px;color:var(--text2);font-size:13px}
+  .spinner{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="hdr">
+    <span class="hdr-title">📊 NSE Dashboard 2 — Avg Entry-Day Return (6-Month)</span>
+    <span class="badge"><span class="live-dot"></span>Local data</span>
+    <span class="updated" id="updatedTs">—</span>
+  </div>
+  <div class="subtitle">
+    For each stock the end date is fixed at the latest close. For every trading day in the past 6 months, the return from buying that day and holding to the latest close is computed, then averaged. In short: <strong>on average, if you had bought on each day in the past 6 months and held to today, what return would you have?</strong>
+  </div>
+
+  <div id="errBox" style="display:none" class="err-box"></div>
+
+  <div class="stats">
+    <div class="sc"><div class="sc-label">Stocks loaded</div><div class="sc-val" id="st-total">—</div><div class="sc-sub" id="st-universe">of universe</div></div>
+    <div class="sc"><div class="sc-label">Avg entry return</div><div class="sc-val" id="st-avg">—</div><div class="sc-sub">mean across stocks</div></div>
+    <div class="sc"><div class="sc-label">Median entry return</div><div class="sc-val" id="st-med">—</div><div class="sc-sub">across stocks</div></div>
+    <div class="sc"><div class="sc-label">Avg % profitable</div><div class="sc-val" id="st-prof">—</div><div class="sc-sub">entry days in profit</div></div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <span class="ico">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search symbol…" oninput="onFilter()">
+    </div>
+    <span class="ctrl-label">Avg return:</span>
+    <select id="retSel" onchange="onFilter()">
+      <option value="">All</option>
+      <option value="pos">Positive only</option>
+      <option value="neg">Negative only</option>
+      <option value="gt20">≥ 20%</option>
+      <option value="gt50">≥ 50%</option>
+    </select>
+    <span class="ctrl-label">Consistency:</span>
+    <select id="profSel" onchange="onFilter()">
+      <option value="">All</option>
+      <option value="p70">≥ 70% profitable</option>
+      <option value="p90">≥ 90% profitable</option>
+      <option value="p100">100% profitable</option>
+    </select>
+    <span class="ctrl-label">Sort:</span>
+    <select id="sortSel" onchange="onFilter()">
+      <option value="avg_entry_return_desc">Avg return ↓ (best)</option>
+      <option value="avg_entry_return_asc">Avg return ↑ (worst)</option>
+      <option value="pct_profitable_entries_desc">% profitable ↓</option>
+      <option value="best_entry_return_desc">Best day ↓</option>
+      <option value="worst_entry_return_asc">Worst day ↑</option>
+      <option value="roll3m_avg_desc">3M roll avg ↓ (best)</option>
+      <option value="roll3m_avg_asc">3M roll avg ↑ (worst)</option>
+      <option value="roll3m_pos_pct_desc">3M % positive ↓</option>
+      <option value="symbol_asc">Symbol A→Z</option>
+      <option value="price_desc">Price ↓</option>
+    </select>
+  </div>
+
+  <div class="tbl-wrap">
+    <table id="mainTable">
+      <thead>
+        <tr>
+          <th onclick="cycleSort('symbol')">Symbol</th>
+          <th onclick="cycleSort('avg_entry_return')" title="Average return across all entry days in the past 6 months, held to latest close">Avg Entry Return ↕</th>
+          <th>Distribution</th>
+          <th onclick="cycleSort('median_entry_return')">Median ↕</th>
+          <th onclick="cycleSort('best_entry_return')">Best Day ↕</th>
+          <th onclick="cycleSort('worst_entry_return')">Worst Day ↕</th>
+          <th onclick="cycleSort('pct_profitable_entries')" title="% of entry days that would have been profitable">% Profitable ↕</th>
+          <th onclick="cycleSort('roll3m_avg')" title="True 3-month rolling return: avg of all 3-month holding periods (both dates move). Not anchored to today.">3M Roll Avg ↕</th>
+          <th onclick="cycleSort('roll3m_pos_pct')" title="% of 3-month rolling windows that were positive">3M % Pos ↕</th>
+          <th onclick="cycleSort('price')">Price (₹) ↕</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="10"><div class="loader"><div class="spinner"></div>Loading data…</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pg" id="pg"></div>
+  <div id="detailPanel"></div>
+</div>
+
+<script>
+const PAGE = 25;
+let allRows = [], filtered = [], page = 1;
+let sortCol = "avg_entry_return", sortDir = "desc";
+
+function parseCSV(text){
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h=>h.trim());
+  return lines.slice(1).map(line=>{
+    const vals = line.split(',');
+    const o = {};
+    headers.forEach((h,i)=>{
+      const v = (vals[i]??'').trim();
+      const num = parseFloat(v);
+      o[h] = (!isNaN(num) && v!=='') ? num : (v===''?null:v);
+    });
+    return o;
+  }).filter(r=>r.symbol);
+}
+
+async function load(){
+  try{
+    const r = await fetch('data/results2.csv');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    allRows = parseCSV(await r.text());
+    initStats();
+    onFilter();
+    try{
+      const m = await fetch('data/meta2.json');
+      if(m.ok){
+        const meta = await m.json();
+        document.getElementById('updatedTs').textContent = 'Last fetched: '+meta.last_updated;
+        document.getElementById('st-universe').textContent = 'of '+meta.total_in_universe+' universe';
+      }
+    }catch(_){}
+  }catch(e){ showErr(e.message); }
+}
+
+function showErr(msg){
+  const b=document.getElementById('errBox');
+  b.style.display='block';
+  b.innerHTML='<strong>Could not load data/results2.csv</strong><br>Run <code>python3 fetch_data2.py --limit 50</code> first to generate the data file (test batch), then reload.<br><em>'+msg+'</em>';
+  document.getElementById('tbody').innerHTML='<tr><td colspan="10"><div class="no-data">No data yet. Run fetch_data2.py.</div></td></tr>';
+}
+
+function initStats(){
+  const n=allRows.length;
+  document.getElementById('st-total').textContent=n;
+  const a=allRows.filter(r=>r.avg_entry_return!=null).map(r=>r.avg_entry_return);
+  if(a.length){
+    const avg=(a.reduce((x,y)=>x+y,0)/a.length);
+    document.getElementById('st-avg').textContent=(avg>=0?'+':'')+avg.toFixed(1)+'%';
+    const sorted=[...a].sort((x,y)=>x-y);
+    const med=sorted[Math.floor(sorted.length/2)];
+    document.getElementById('st-med').textContent=(med>=0?'+':'')+med.toFixed(1)+'%';
+  }
+  const p=allRows.filter(r=>r.pct_profitable_entries!=null).map(r=>r.pct_profitable_entries);
+  if(p.length){
+    const avgp=(p.reduce((x,y)=>x+y,0)/p.length);
+    document.getElementById('st-prof').textContent=avgp.toFixed(0)+'%';
+  }
+}
+
+function onFilter(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const retF=document.getElementById('retSel').value;
+  const profF=document.getElementById('profSel').value;
+  const sortVal=document.getElementById('sortSel').value;
+  const parts=sortVal.split('_');
+  sortDir=parts.pop(); sortCol=parts.join('_');
+
+  filtered=allRows.filter(r=>{
+    if(q && !r.symbol?.toLowerCase().includes(q)) return false;
+    if(retF==='pos'&&(r.avg_entry_return==null||r.avg_entry_return<=0))return false;
+    if(retF==='neg'&&(r.avg_entry_return==null||r.avg_entry_return>=0))return false;
+    if(retF==='gt20'&&(r.avg_entry_return==null||r.avg_entry_return<20))return false;
+    if(retF==='gt50'&&(r.avg_entry_return==null||r.avg_entry_return<50))return false;
+    if(profF==='p70'&&(r.pct_profitable_entries==null||r.pct_profitable_entries<70))return false;
+    if(profF==='p90'&&(r.pct_profitable_entries==null||r.pct_profitable_entries<90))return false;
+    if(profF==='p100'&&(r.pct_profitable_entries==null||r.pct_profitable_entries<100))return false;
+    return true;
+  });
+
+  filtered.sort((a,b)=>{
+    let av=a[sortCol],bv=b[sortCol];
+    if(typeof av==='string')return sortDir==='asc'?av.localeCompare(bv||''):(bv||'').localeCompare(av);
+    if(av==null)av=sortDir==='asc'?Infinity:-Infinity;
+    if(bv==null)bv=sortDir==='asc'?Infinity:-Infinity;
+    return sortDir==='asc'?av-bv:bv-av;
+  });
+  page=1; render();
+}
+
+function cycleSort(col){
+  if(sortCol===col)sortDir=sortDir==='desc'?'asc':'desc';
+  else{sortCol=col;sortDir='desc';}
+  document.getElementById('sortSel').value=`${sortCol}_${sortDir}`;
+  onFilter();
+}
+
+function render(){
+  const pages=Math.ceil(filtered.length/PAGE);
+  if(page>pages&&pages>0)page=pages;
+  const slice=filtered.slice((page-1)*PAGE,page*PAGE);
+  if(!slice.length){
+    document.getElementById('tbody').innerHTML='<tr><td colspan="10"><div class="no-data">No stocks match</div></td></tr>';
+    document.getElementById('pg').innerHTML=''; return;
+  }
+  const fmt=(v)=>v!=null?((v>=0?'+':'')+v.toFixed(1)+'%'):'—';
+  const cls=(v)=>v==null?'':v>=0?'pos':'neg';
+  // distribution bar: worst (left, red) to best (right, green), with 0 marker
+  document.getElementById('tbody').innerHTML=slice.map(r=>{
+    const worst=r.worst_entry_return, best=r.best_entry_return;
+    let bar='';
+    if(worst!=null&&best!=null){
+      const span=Math.max(Math.abs(worst),Math.abs(best),1);
+      const negW=Math.round(Math.abs(Math.min(worst,0))/span*45);
+      const posW=Math.round(Math.abs(Math.max(best,0))/span*45);
+      bar=`<span class="bar-wrap" style="display:inline-flex;justify-content:center">
+        <span style="width:${negW}px;height:5px;background:var(--red);border-radius:3px 0 0 3px"></span>
+        <span style="width:${posW}px;height:5px;background:var(--green);border-radius:0 3px 3px 0"></span>
+      </span>`;
+    }
+    return `<tr onclick="showDetail('${r.symbol}')">
+      <td><div class="sym">${r.symbol}</div></td>
+      <td class="big ${cls(r.avg_entry_return)}">${fmt(r.avg_entry_return)}</td>
+      <td>${bar}</td>
+      <td class="${cls(r.median_entry_return)}">${fmt(r.median_entry_return)}</td>
+      <td class="${cls(r.best_entry_return)}">${fmt(r.best_entry_return)}</td>
+      <td class="${cls(r.worst_entry_return)}">${fmt(r.worst_entry_return)}</td>
+      <td class="${r.pct_profitable_entries>=50?'pos':'neg'}">${r.pct_profitable_entries!=null?r.pct_profitable_entries.toFixed(0)+'%':'—'}</td>
+      <td class="big ${cls(r.roll3m_avg)}">${fmt(r.roll3m_avg)}</td>
+      <td class="${r.roll3m_pos_pct>=50?'pos':'neg'}">${r.roll3m_pos_pct!=null?r.roll3m_pos_pct.toFixed(0)+'%':'—'}</td>
+      <td>₹${r.price?.toFixed(2)??'—'}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('pg').innerHTML=pages<=1?'':`
+    <button onclick="goPage(${page-1})" ${page<=1?'disabled':''}>‹ Prev</button>
+    <span style="font-size:12px;color:var(--text2)">Page ${page} of ${pages} · ${filtered.length} stocks</span>
+    <button onclick="goPage(${page+1})" ${page>=pages?'disabled':''}>Next ›</button>`;
+}
+
+function goPage(p){page=p;render();}
+
+function showDetail(symbol){
+  const r=allRows.find(s=>s.symbol===symbol);
+  if(!r)return;
+  const fmt=(v)=>v!=null?((v>=0?'+':'')+v.toFixed(2)+'%'):'N/A';
+  const cls=(v)=>v==null?'':v>=0?'pos':'neg';
+  document.getElementById('detailPanel').innerHTML=`
+    <div class="detail">
+      <div class="detail-hdr">
+        <div><div class="detail-sym">${r.symbol}</div>
+        <div style="font-size:12px;color:var(--text3)">${r.entry_days||0} entry days analysed · as of ${r.as_of||''}</div></div>
+        <button class="close-btn" onclick="document.getElementById('detailPanel').innerHTML=''">✕</button>
+      </div>
+      <div class="detail-grid">
+        <div class="dg-item"><div class="dg-label">Average entry return</div><div class="dg-val ${cls(r.avg_entry_return)}">${fmt(r.avg_entry_return)}</div></div>
+        <div class="dg-item"><div class="dg-label">Median entry return</div><div class="dg-val ${cls(r.median_entry_return)}">${fmt(r.median_entry_return)}</div></div>
+        <div class="dg-item"><div class="dg-label">Best entry day</div><div class="dg-val ${cls(r.best_entry_return)}">${fmt(r.best_entry_return)}</div></div>
+        <div class="dg-item"><div class="dg-label">Worst entry day</div><div class="dg-val ${cls(r.worst_entry_return)}">${fmt(r.worst_entry_return)}</div></div>
+        <div class="dg-item"><div class="dg-label">% entry days profitable</div><div class="dg-val ${r.pct_profitable_entries>=50?'pos':'neg'}">${r.pct_profitable_entries!=null?r.pct_profitable_entries.toFixed(1)+'%':'N/A'}</div></div>
+        <div class="dg-item"><div class="dg-label">3M rolling avg ${r.roll3m_windows?'('+r.roll3m_windows+' windows)':''}</div><div class="dg-val ${cls(r.roll3m_avg)}">${fmt(r.roll3m_avg)}</div></div>
+        <div class="dg-item"><div class="dg-label">3M rolling best / worst</div><div class="dg-val" style="font-size:15px"><span class="${cls(r.roll3m_best)}">${fmt(r.roll3m_best)}</span> / <span class="${cls(r.roll3m_worst)}">${fmt(r.roll3m_worst)}</span></div></div>
+        <div class="dg-item"><div class="dg-label">3M rolling % positive</div><div class="dg-val ${r.roll3m_pos_pct>=50?'pos':'neg'}">${r.roll3m_pos_pct!=null?r.roll3m_pos_pct.toFixed(1)+'%':'N/A'}</div></div>
+        <div class="dg-item"><div class="dg-label">Current price</div><div class="dg-val">₹${r.price?.toFixed(2)??'—'}</div></div>
+        <div class="dg-item"><div class="dg-label">6-month high / low</div><div class="dg-val" style="font-size:15px">₹${r.high_52w?.toFixed(1)??'—'} / ₹${r.low_52w?.toFixed(1)??'—'}</div></div>
+        <div class="dg-item"><div class="dg-label">Day change</div><div class="dg-val ${cls(r.day_change_pct)}">${fmt(r.day_change_pct)}</div></div>
+      </div>
+      <div class="detail-note">
+        <strong>Average entry return</strong> fixes the end date at today and averages the return from buying on every day in the past 6 months — so it is anchored to today's price and flatters recent spikes.<br><br>
+        <strong>3M rolling return</strong> is different: it slides a 3-month window across history (both start and end dates move), measuring how a typical 3-month hold performed. It is NOT anchored to today, so it is the cleaner read on the stock's general track record. Compare the two: entry return tells you "how do past buyers sit right now", rolling tells you "how does this stock usually behave".
+      </div>
+    </div>`;
+  document.getElementById('detailPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+load();
+</script>
+</body>
+</html>
