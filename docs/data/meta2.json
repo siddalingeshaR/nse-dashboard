@@ -1,1 +1,7 @@
-{"last_updated": "awaiting first fetch", "total_in_universe": 1681, "total_in_csv": 0, "fetched_this_run": 0, "failed_this_run": []}
+{
+  "last_updated": "2026-06-21 05:34:07",
+  "total_in_universe": 1681,
+  "total_in_csv": 1681,
+  "fetched_this_run": 1681,
+  "failed_this_run": []
+}
