@@ -1,7 +1,9 @@
 {
-  "last_updated": "2026-07-12 18:03:11",
+  "last_updated": "2026-07-13 19:23:24",
   "total_in_universe": 1681,
-  "total_in_csv": 1681,
-  "fetched_this_run": 1681,
-  "failed_this_run": []
+  "total_in_csv": 1680,
+  "fetched_this_run": 1680,
+  "failed_this_run": [
+    "PRABHA"
+  ]
 }
