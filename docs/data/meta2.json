@@ -1,7 +1,10 @@
 {
-  "last_updated": "2026-07-14 18:38:52",
+  "last_updated": "2026-07-15 19:03:19",
   "total_in_universe": 1681,
-  "total_in_csv": 1681,
-  "fetched_this_run": 1681,
-  "failed_this_run": []
+  "total_in_csv": 1679,
+  "fetched_this_run": 1679,
+  "failed_this_run": [
+    "PARADEEP",
+    "GUJGASLTD"
+  ]
 }
