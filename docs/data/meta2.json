@@ -1,10 +1,9 @@
 {
-  "last_updated": "2026-07-16 19:06:00",
+  "last_updated": "2026-07-17 18:40:37",
   "total_in_universe": 1681,
-  "total_in_csv": 1679,
-  "fetched_this_run": 1679,
+  "total_in_csv": 1680,
+  "fetched_this_run": 1680,
   "failed_this_run": [
-    "BOROSCI",
     "GUJGASLTD"
   ]
 }
