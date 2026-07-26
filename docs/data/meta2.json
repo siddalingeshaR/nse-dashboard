@@ -1,9 +1,10 @@
 {
-  "last_updated": "2026-07-25 15:58:57",
+  "last_updated": "2026-07-26 15:57:10",
   "total_in_universe": 1681,
-  "total_in_csv": 1680,
-  "fetched_this_run": 1680,
+  "total_in_csv": 1679,
+  "fetched_this_run": 1679,
   "failed_this_run": [
+    "AMIRCHAND",
     "GUJGASLTD"
   ]
 }
