@@ -1,24 +1,10 @@
 {
-  "last_updated": "2026-08-16 15:07:05",
+  "last_updated": "2026-08-17 15:14:31",
   "total_in_universe": 1681,
-  "total_in_csv": 1665,
-  "fetched_this_run": 1665,
+  "total_in_csv": 1679,
+  "fetched_this_run": 1679,
   "failed_this_run": [
-    "GRANDOAK",
-    "INVPRECQ",
-    "MCCHRLS-B",
-    "KLBRENG-B",
-    "KAMAHOLD",
-    "FEDDERSHOL",
     "AMIRCHAND",
-    "KPL",
-    "NATIONSTD",
-    "BENGALASM",
-    "BAJAJST",
-    "ARTEMISMED",
-    "FRONTSP",
-    "GUJGASLTD",
-    "KIRANVYPAR",
-    "TECHNVISN"
+    "GUJGASLTD"
   ]
 }
