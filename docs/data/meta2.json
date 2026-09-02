@@ -1,8 +1,8 @@
 {
-  "last_updated": "2026-09-01 18:13:41",
+  "last_updated": "2026-09-02 18:20:31",
   "total_in_universe": 1681,
-  "total_in_csv": 1645,
-  "fetched_this_run": 1645,
+  "total_in_csv": 1643,
+  "fetched_this_run": 1643,
   "failed_this_run": [
     "GRANDOAK",
     "NILE",
@@ -34,7 +34,9 @@
     "DRAGARWQ",
     "BENGALASM",
     "BAJAJST",
+    "JBCHEPHARM",
     "FRONTSP",
+    "GUJGASLTD",
     "GNRL",
     "3BBLACKBIO",
     "KIRANVYPAR",
