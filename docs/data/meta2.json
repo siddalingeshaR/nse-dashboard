@@ -1,28 +1,11 @@
 {
-  "last_updated": "2026-09-29 19:50:00",
+  "last_updated": "2026-09-30 19:51:53",
   "total_in_universe": 1681,
-  "total_in_csv": 1661,
-  "fetched_this_run": 1661,
+  "total_in_csv": 1678,
+  "fetched_this_run": 1678,
   "failed_this_run": [
-    "BNAGROCHEM",
-    "INVPRECQ",
-    "MCCHRLS-B",
-    "KAMAHOLD",
-    "HALDYNGL",
-    "INDPRUD",
-    "WPIL",
-    "SHINDL",
     "AMIRCHAND",
-    "PRADPME",
-    "BLIL",
-    "AKCAPIT",
-    "DRAGARWQ",
-    "BENGALASM",
-    "BAJAJST",
     "JBCHEPHARM",
-    "GUJGASLTD",
-    "KIRANVYPAR",
-    "ZSARACOM",
-    "TECHNVISN"
+    "GUJGASLTD"
   ]
 }
